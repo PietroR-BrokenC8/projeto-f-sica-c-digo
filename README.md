@@ -1,2 +1,3 @@
 # projeto-f-sica-c-digo
-MIGUEL POPO GULOSO
+
+Feito por: Arthur Rosa, Arthur Stenert, Fernando, Miguel, Otávio Gutinho, Pietro Roldão
