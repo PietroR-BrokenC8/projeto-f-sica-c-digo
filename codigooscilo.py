@@ -1,3 +1,5 @@
+"""Esse é o da IA, não oq a gente fez. Não usar, só de referencia"""
+
 import math
 
 
