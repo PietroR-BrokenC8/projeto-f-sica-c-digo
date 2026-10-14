@@ -4,8 +4,8 @@ import time
 import os
 import math
 # atualização por pietro: adicionado variaveis para proporcionar flexibilidade
-largura = 115
-altura = 60
+largura = 101
+altura = 61
 #limpaTela:Limpa o terminal. Importante para compreensão do menu(e o terminal não ter 250 linhas toda vez q um novo comando for executado)
 def limpaTela():
     tipoSistema = os.name #cada sistema operacional tem meio q um id de .os, eu acho. Como o comando de terminal do windows é diferentão...
@@ -103,24 +103,16 @@ while True: #É a mesma coisa de antes basicamente
 grafico = geraTabela(largura, altura) #vai gerar um retangulão de 21 por 9 | atualização por pietro: a geração agora é definida pelas variaveis de largura e altura, tornando o codigo mais flexivel
 #Agora vem o processamento diabólico que usa a tal de "onda senoidal"
 #A fórmula normal seria "Amplitude * sen(ângulo definido)" MAS A GENTE NÃO TEM ÂNGULO A GENTE TEM FREQUÊNCIA ENT COMO Q FICA
-#Muitos estudos depois provaram que se a gente fazer "A * math.sin(2 * math.pi * frequencia * (i/20))" num for vai dar certo
 #2*math.pi * (i/20) num for de range 21 faz uma subida e descida, o i/20 é cada ponto X no gráfico, multiplicar pela frequencia faz o bagui se espremer pra dar mais voltas
 #É alguma magia negra da matemática que eu não sei explicar mas vamo testar
 for i in range(largura): #A gente sabe que o comprimento do gráfico é 21 ent n precisa fazer outras coisas | atualização por pietro: o mesmo de casos anteriores, agora é utilizada uma variavel ao invés de numero fixo para maior flexibilidade
-    coordenadaX = i
-    #A coordenada X não tem segredo, vamo aplicar a magia da coordenada Y agora
-    #ETAPA 1: Magia -> vai ser igual a algum valor entre amplitude positiva e amplitude negativa, podendo ser quebrado
-    #atualização por pietro: alterei levemente a formula para gerar ondas mais suaves e visiveis dentro da limitação que temos
-    coordenadaY = (amplitude * 1.1) * math.sin((frequencia / 3) * 2 * math.pi * (i / 20))
-    #ETAPA 2: tem que arredondar pq o nosso bagui n aceita numero quebrado
-    coordenadaY = round(coordenadaY)
-    #ETAPA 3: a linha zero do nosso gráfico fica no meio dele, que na verdade é a linha 4(no caso é a quinta linha, mas começa no 0)
-    #Então a gente pega a coordenada que ele pensa que deve colocar(que vai de 4 até -4, dependendo da amplitude escolhida) e somar 4 pra ele dar o shift certo
-    #Se a meta era -4, ele vai pra linha 0, o fundo do gráfico. Se era 0, vai pra 4, o meio. E se a meta era 4, vai pra 8, o topo do gráfico
-    #atualização por pietro: agora a linha a baixo não é dependente de +4 apenas, tendo agora um calculo automatizado para centralizar a onda corretamente graças a variavel anteriormente mencionada no inicio do codigo
-    coordenadaY += round(altura / 2)
+    for k in range(altura): #atualização por pietro: fiz uma alteração signficativa no calculo e seleção dos pontos mas que resolveram a questão dos espaçamentos
+        ponto_atual=(i+k / altura) / (largura-1)
+        coordenadaY = round((amplitude * 1.1)*math.sin((frequencia/3)*2*math.pi*ponto_atual))
+        coordenadaX = round(i+k/altura)
+        alteraPonto(grafico, i, coordenadaY + altura //2)
+        #o stennert deu a ideia fe fazer a onda ser colorida ao invés de branca, tipo azul, ou verde sla
     #AGORA É IMPRIMIR E REZAR PRA DAR CERTO. TO usando o caractere padrão que é o m, mas se vocês achar um melhor a gente troca
-    alteraPonto(grafico, coordenadaX, coordenadaY)
 #SUPOSTAMENTE ele faz isso 20 vezes e completa nosso gráfico, aí é só imprimir o gráfico usando o imprimeTabela
 print("Gerando onda...")
 time.sleep(5) #Demorar mais tempo porque é mais legal
