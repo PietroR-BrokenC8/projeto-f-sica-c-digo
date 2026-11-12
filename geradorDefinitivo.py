@@ -1,21 +1,17 @@
 #Esse aqui é pra valer, amigos. Esse é o código final, podem atualizar como bem entenderem.
 
 import time
-import os
+import sys, os
 import math
 # atualização por pietro: adicionado variaveis para proporcionar flexibilidade
-largura = 131
+largura = 101
 altura = 41
 continuar = True
+criadores_cabecalho = ["Programadores principais:\n\n", "Programadores secundários:\n\n", "Responsáveis pelo artigo:\n\n", "Créditos especiais:\n\n"]
+Criadores = ["- Fernando Lindner\n- Pietro Roldão Figueiró", "- Arthur Andriolo da Rosa\n- Arthur Stenert Lopes dos Santos\n- Miguel Fülber Gomes\n- Otávio Augusto Freiberger", "- Arthur Stenert Lopes dos Santos", "- prof Ione - professora que conduziu o projeto e pesquisa\n- prof Frederico - professor  professor que idealizou e iniciou o projeto\n- prof Graziano - professor que conduziu e auxiliou no código"]
 #limpaTela:Limpa o terminal. Importante para compreensão do menu(e o terminal não ter 250 linhas toda vez q um novo comando for executado)
 def limpaTela():
-    tipoSistema = os.name #cada sistema operacional tem meio q um id de .os, eu acho. Como o comando de terminal do windows é diferentão...
-    if tipoSistema == "nt": #Id do windows
-        _ = os.system("cls") #É basicamente digitando no cmd direto, mt massa 
-    else:
-        _ = os.system("clear") #Como o windows é "especial", ele só usa cls. O resto usa clear
-
-#geraTabela: prepara uma grade pra nós, uma lista de listas
+    print("\033[2J\033[H", end="", flush=True)
 #caracter é alterável, mas por padrão é o .
 def geraTabela(quantiaCaracteres, quantiaLinhas, caracter="\033[31m.\033[0m", caracter2="-", caracter3="|"):
     tabelaRetornada = []
@@ -70,9 +66,9 @@ def alteraPonto(grid, coordX, coordY, caracter="\033[34mm\033[0m"):
 
 #imprimeTabela: Auto explicativo né patrão
 def imprimeTabela(grid):
-    for i in range(len(grid)):
-        print(" ".join(grid[i])) #Eu botei um espacinho entre cada ponto pro negócio não ficar tão pequeno
-#NÃO É MAIS TESTE, TUDO AQUI PRA BAIXO É PRA VALER
+    frame = "\n".join(" ".join(grid[i]) for i in range(len(grid))) + "\n"
+    os.write(1, frame.encode())
+    #NÃO É MAIS TESTE, TUDO AQUI PRA BAIXO É PRA VALER
 
 criadores = ["Arthur Andriolo da Rosa", "Arthur Stenert Lopes dos Santos", "Fernando Lindner", "Miguel Fülber Gomes", "Otávio Augusto Freiberger", "Pietro Roldão Figueiró"]
 print("Gerador de ondas 20029 super ultra blaster")
@@ -86,15 +82,15 @@ limpaTela()
 #Eu poderia fazer um loop até um valor correto ser aceito
 while continuar == True:
     while True:
-        print("Insira a frequência(Números inteiros apenas, sem letras; De 1 a 5 Hz)")
+        print("Insira a frequência(Números inteiros apenas, sem letras; De 1 a 100 Hz)")
         try:
             frequencia = int(input()) #Se o imbecil que usar o código colocar letras vai pro except
-            if 0 < frequencia <= 1000:
+            if 0 < frequencia <= 100:
                 limpaTela()
                 print("Frequência de %dHz aceita!" % (frequencia))
                 break
             else:
-                print("Ok é um número mas o MÍNIMO é 1 e o MÁXIMO é 5")
+                print("Ok é um número mas o MÍNIMO é 1 e o MÁXIMO é 100")
                 time.sleep(5)
         except ValueError as erro: #Então esse "ValueError" é pra ser o código de erro quando alguém coloca letra. Eu vou tacar na variável erro e colocar na mensagem
             print("Deu pau: " + str(erro) + " Relembrando: NÚMERO INTEIRO, SEM LETRAS") #Aparentemente o erro não é uma string mas sim alguma outra coisa, porque me torturas piton
@@ -102,15 +98,15 @@ while continuar == True:
         limpaTela()
         print("Tenta denovo. Coloca um valor válido dessa vez.")
     while True: #É a mesma coisa de antes basicamente
-        print("Insira a amplitude(Número apenas; de 1 a 4)")
+        print("Insira a amplitude(Número apenas; de 1 a 18)")
         try:
             amplitude = int(input())
-            if 0 < amplitude <= 500:
+            if 0 < amplitude <= 18:
                 limpaTela()
                 print("Amplitude de valor %d aceita!" % (amplitude))
                 break
             else:
-                print("É um número mas é inválido. O MÍNIMO é 1 e o MÁXIMO é 4")
+                print("É um número mas é inválido. O MÍNIMO é 1 e o MÁXIMO é 18")
                 time.sleep(5)
         except ValueError as erro:
             print("Deu pau: " + str(erro) + " Relembrando: SEM LETRAS NO INPUT")
@@ -125,6 +121,13 @@ while continuar == True:
     #A fórmula normal seria "Amplitude * sen(ângulo definido)" MAS A GENTE NÃO TEM ÂNGULO A GENTE TEM FREQUÊNCIA ENT COMO Q FICA
     #2*math.pi * (i/20) num for de range 21 faz uma subida e descida, o i/20 é cada ponto X no gráfico, multiplicar pela frequencia faz o bagui se espremer pra dar mais voltas
     #É alguma magia negra da matemática que eu não sei explicar mas vamo testar
+    for i in range(5):
+        textosleep = ["Gerando onda"]
+        for j in range(4):
+            print("".join(textosleep))
+            textosleep.append(".")
+            time.sleep(0.25)
+            limpaTela()
     for i in range(largura): #A gente sabe que o comprimento do gráfico é 21 ent n precisa fazer outras coisas | atualização por pietro: o mesmo de casos anteriores, agora é utilizada uma variavel ao invés de numero fixo para maior flexibilidade
         for k in range(altura): #atualização por pietro: fiz uma alteração signficativa no calculo e seleção dos pontos mas que resolveram a questão dos espaçamentos
             ponto_atual=(i+k / altura) / (largura-1)
@@ -134,16 +137,10 @@ while continuar == True:
             #o stennert deu a ideia fe fazer a onda ser colorida ao invés de branca, tipo azul, ou verde sla
         #AGORA É IMPRIMIR E REZAR PRA DAR CERTO. TO usando o caractere padrão que é o m, mas se vocês achar um melhor a gente troca
     #SUPOSTAMENTE ele faz isso 20 vezes e completa nosso gráfico, aí é só imprimir o gráfico usando o imprimeTabela
-    for i in range(5):
-        textosleep = ["Gerando onda"]
-        for j in range(4):
-            print("".join(textosleep))
-            textosleep.append(".")
-            time.sleep(0.25)
-            limpaTela()
+    limpaTela()
     imprimeTabela(grafico)
     
-    if input("Acabou. se quiser gerar mais uma onda digite \033[34m1\033[0m, que tiver enjoado dessas ondas, digite qualquer outra coisa ai\n") == "1":
+    if input("Acabou. se quiser gerar mais uma onda digite \033[32m1\033[0m, que tiver enjoado dessas ondas, digite qualquer outra coisa ai\n") == "1":
         continuar = True
         limpaTela()
     else:
@@ -152,4 +149,11 @@ while continuar == True:
         print("se gostou deixa o \033[32mlike\033[0m, se \033[31minscreve\033[0m e ativa o \033[33msininho\033[0m!")
     #EU FIZ UM TESTE COM FREQUÊNCIA 1 E AMPLITUDE 4 E DEU CERTO TESTAR COM MAIS VALORES DEPOIS VAMOOOOOOOOOOOOOOO
     #SUPOSTAMENTE É GG TROPA, SÓ FAZER O ARTIGO, ARRUMAR O QUE CÊS PREFERIR E LIMPAR ESSA BAGUNÇA
-print("CÓDIGO ACABOU, SE NADA EXPLODIU ATÉ AGORA É PORQUE DEU CERTO")
+limpaTela()
+print("é isso, vlw, flw, rola os créditos aí")
+for i in range(len(criadores_cabecalho)):
+    print(criadores_cabecalho[i])
+    time.sleep(1)
+    print(Criadores[i])
+    time.sleep(2)
+    limpaTela()
