@@ -76,7 +76,7 @@ def alteraPonto(grid, coordX, coordY, caracter="\033[34mm\033[0m"):
 #imprimeTabela: Auto explicativo né patrão
 def imprimeTabela(grid):
     frame = "\n".join(" ".join(grid[i]) for i in range(len(grid))) + "\n"
-    os.write(1, frame.encode())
+    sys.stdout.buffer.write(frame.encode("utf-8"))
     #NÃO É MAIS TESTE, TUDO AQUI PRA BAIXO É PRA VALER
 
 criadores = ["Arthur Andriolo da Rosa", "Arthur Stenert Lopes dos Santos", "Fernando Lindner", "Miguel Fülber Gomes", "Otávio Augusto Freiberger", "Pietro Roldão Figueiró"]
@@ -140,6 +140,8 @@ while continuar == True:
                 limpaTela()
     else:
         print("Gerando onda...")
+        time.sleep(5)
+        limpaTela()
     for i in range(largura): #A gente sabe que o comprimento do gráfico é 21 ent n precisa fazer outras coisas | atualização por pietro: o mesmo de casos anteriores, agora é utilizada uma variavel ao invés de numero fixo para maior flexibilidade
         for k in range(altura): #atualização por pietro: fiz uma alteração signficativa no calculo e seleção dos pontos mas que resolveram a questão dos espaçamentos
             ponto_atual=(i+k / altura) / (largura-1)
