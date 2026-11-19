@@ -3,6 +3,15 @@
 import time
 import sys, os
 import math
+if os.name == 'nt':  # Verifica se é Windows
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        # Obtém o identificador da saída padrão (STD_OUTPUT_HANDLE = -11)
+        handle = kernel32.GetStdHandle(-11)
+        mode = ctypes.c_ulong()
+        # Lê o modo atual do console e ativa o bit 0x0004 (ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+        if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            kernel32.SetConsoleMode(handle, mode.value | 0x0004)
 # atualização por pietro: adicionado variaveis para proporcionar flexibilidade
 largura = 101
 altura = 41
@@ -11,7 +20,7 @@ criadores_cabecalho = ["Programadores principais:\n\n", "Programadores secundár
 Criadores = ["- Fernando Lindner\n- Pietro Roldão Figueiró", "- Arthur Andriolo da Rosa\n- Arthur Stenert Lopes dos Santos\n- Miguel Fülber Gomes\n- Otávio Augusto Freiberger", "- Arthur Stenert Lopes dos Santos", "- prof Ione - professora que conduziu o projeto e pesquisa\n- prof Frederico - professor  professor que idealizou e iniciou o projeto\n- prof Graziano - professor que conduziu e auxiliou no código"]
 #limpaTela:Limpa o terminal. Importante para compreensão do menu(e o terminal não ter 250 linhas toda vez q um novo comando for executado)
 def limpaTela():
-    print("\033[2J\033[H", end="", flush=True)
+    print("\033[3J\033[2J\033[H", end="", flush=True)
 #caracter é alterável, mas por padrão é o .
 def geraTabela(quantiaCaracteres, quantiaLinhas, caracter="\033[31m.\033[0m", caracter2="-", caracter3="|"):
     tabelaRetornada = []
@@ -121,24 +130,30 @@ while continuar == True:
     #A fórmula normal seria "Amplitude * sen(ângulo definido)" MAS A GENTE NÃO TEM ÂNGULO A GENTE TEM FREQUÊNCIA ENT COMO Q FICA
     #2*math.pi * (i/20) num for de range 21 faz uma subida e descida, o i/20 é cada ponto X no gráfico, multiplicar pela frequencia faz o bagui se espremer pra dar mais voltas
     #É alguma magia negra da matemática que eu não sei explicar mas vamo testar
-    for i in range(5):
-        textosleep = ["Gerando onda"]
-        for j in range(4):
-            print("".join(textosleep))
-            textosleep.append(".")
-            time.sleep(0.25)
-            limpaTela()
+    if os.name == "posix":
+        for i in range(5):
+            textosleep = ["Gerando onda"]
+            for j in range(4):
+                print("".join(textosleep))
+                textosleep.append(".")
+                time.sleep(0.25)
+                limpaTela()
+    else:
+        print("Gerando onda...")
     for i in range(largura): #A gente sabe que o comprimento do gráfico é 21 ent n precisa fazer outras coisas | atualização por pietro: o mesmo de casos anteriores, agora é utilizada uma variavel ao invés de numero fixo para maior flexibilidade
         for k in range(altura): #atualização por pietro: fiz uma alteração signficativa no calculo e seleção dos pontos mas que resolveram a questão dos espaçamentos
             ponto_atual=(i+k / altura) / (largura-1)
             coordenadaY = round((amplitude*1.1)*math.sin((frequencia/3)*2*math.pi*ponto_atual))
             coordenadaX = round(i+k/altura)
             alteraPonto(grafico, i, coordenadaY + altura //2)
+            if os.name == "posix":
+                print("\033[H")
+                imprimeTabela(grafico)
             #o stennert deu a ideia fe fazer a onda ser colorida ao invés de branca, tipo azul, ou verde sla
         #AGORA É IMPRIMIR E REZAR PRA DAR CERTO. TO usando o caractere padrão que é o m, mas se vocês achar um melhor a gente troca
     #SUPOSTAMENTE ele faz isso 20 vezes e completa nosso gráfico, aí é só imprimir o gráfico usando o imprimeTabela
-    limpaTela()
-    imprimeTabela(grafico)
+    if os.name == "nt":
+        imprimeTabela(grafico)
     
     if input("Acabou. se quiser gerar mais uma onda digite \033[32m1\033[0m, que tiver enjoado dessas ondas, digite qualquer outra coisa ai\n") == "1":
         continuar = True
