@@ -86,6 +86,7 @@ for i in range(len(criadores)):
     print(criadores[i])
     time.sleep(0.3)
 time.sleep(5)
+input("aviso rápido, o código era pra ter algumas animaçõeszinhas disponiveis para todos os sistemas operacionais, mas devido a limitações do windows as animaç~eos estão disponiveis apenas para linux.\n entrer para continuar pro código.")
 limpaTela()
 #Agora é o momento que o código pede as váriaveis. A gente só precisa de frequência e amplitude
 #Eu poderia fazer um loop até um valor correto ser aceito
