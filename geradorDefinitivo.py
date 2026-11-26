@@ -13,7 +13,7 @@ if os.name == 'nt':  # Verifica se é Windows
         if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
 # atualização por pietro: adicionado variaveis para proporcionar flexibilidade
-largura = 101
+largura = 111
 altura = 41
 continuar = True
 criadores_cabecalho = ["Programadores principais:\n\n", "Programadores secundários:\n\n", "Responsáveis pelo artigo:\n\n", "Créditos especiais:\n\n"]
@@ -22,7 +22,7 @@ Criadores = ["- Fernando Lindner\n- Pietro Roldão Figueiró", "- Arthur Andriol
 def limpaTela():
     print("\033[3J\033[2J\033[H", end="", flush=True)
 #caracter é alterável, mas por padrão é o .
-def geraTabela(quantiaCaracteres, quantiaLinhas, caracter="\033[31m.\033[0m", caracter2="-", caracter3="|"):
+def geraTabela(quantiaCaracteres, quantiaLinhas, caracter="\033[30m.\033[0m", caracter2="-", caracter3="|"):
     tabelaRetornada = []
     # Descobre os índices centrais de linha e coluna
     linha_central = quantiaLinhas // 2
@@ -32,13 +32,13 @@ def geraTabela(quantiaCaracteres, quantiaLinhas, caracter="\033[31m.\033[0m", ca
         for j in range(quantiaCaracteres):
             # 1. Verifica se está em algum dos cantos externos para colocar os números
             if i == 0 and j == quantiaCaracteres - 1:
-                linha.append("\033[32m1\33[0m")  # Canto superior direito
+                linha.append("\033[40m\033[32m1\033[0m")  # Canto superior direito
             elif i == 0 and j == 0:
-                linha.append("\033[32m2\33[0m")  # Canto superior esquerdo
+                linha.append("\033[40m\033[32m2\033[0m")  # Canto superior esquerdo
             elif i == quantiaLinhas - 1 and j == 0:
-                linha.append("\033[32m3\33[0m")  # Canto inferior esquerdo
+                linha.append("\033[40m\033[32m3\033[0m")  # Canto inferior esquerdo
             elif i == quantiaLinhas - 1 and j == quantiaCaracteres - 1:
-                linha.append("\033[32m4\33[0m")  # Canto inferior direito
+                linha.append("\033[40m\033[32m4\033[0m")  # Canto inferior direito
             # 2. Se não for um canto, aplica as regras das linhas e colunas centrais
             elif i == linha_central:
                 linha.append(caracter2)
@@ -57,12 +57,11 @@ def pontoValido(grid, coordX, coordY):
 
 #alteraPonto:Escolhe um ponto de uma grade e o altera. Essa função já está adaptada ao fato q coordy=0 seria o topo, e o converte para q coordy=0 seja o fundo
 #caracter é alterável, mas por padrão é o m
-
 #eu tenho que reforçar isso porque deu problema antes: O código NORMALMENTE interpreta Y(0) como o TOPO DO CÓDIGO,ou seja, a altura é invertida por princípio
 #isso NÃO É BOM porque a fórmula que a gente usar pra gerar os pontos vai entender 0 como o fundo do gráfico(ou no caso o meio do gráfico)
 #Então a gente insere uma fórmula direto na impressão do ponto pra inverter isso. Então agora 0 é o fundo
 #isso vai ser problema depois porque o código desce o gráfico pra valores negativos na crista mas detalhe, a gente conserta isso
-def alteraPonto(grid, coordX, coordY, caracter="\033[34mm\033[0m"):
+def alteraPonto(grid, coordX, coordY, caracter="\033[32mm\033[0m"):
     if pontoValido(grid, coordX, coordY): #Conferindo pra ver se o ponto escolhido não tá fora do alcance
         grid[len(grid)-1-coordY][coordX] = caracter #A fórmula <ALTURA.GRADE>-1-<POSIÇÃO.ESCOLHIDA>Inverte a coordenada pro índice certo
     else:
@@ -78,15 +77,16 @@ def imprimeTabela(grid):
     frame = "\n".join(" ".join(grid[i]) for i in range(len(grid))) + "\n"
     sys.stdout.buffer.write(frame.encode("utf-8"))
     #NÃO É MAIS TESTE, TUDO AQUI PRA BAIXO É PRA VALER
-
+limpaTela()
 criadores = ["Arthur Andriolo da Rosa", "Arthur Stenert Lopes dos Santos", "Fernando Lindner", "Miguel Fülber Gomes", "Otávio Augusto Freiberger", "Pietro Roldão Figueiró"]
-print("Gerador de ondas 20029 super ultra blaster")
+print("Gerador de ondas físicas")
 print("Feito por:")
 for i in range(len(criadores)):
     print(criadores[i])
     time.sleep(0.3)
-time.sleep(5) #O próximo input tinha um erro de digitação(animaç~eos), arrumei :)
-input("aviso rápido, o código era pra ter algumas animaçõeszinhas disponiveis para todos os sistemas operacionais, mas devido a limitações do windows as animações estão disponíveis apenas para linux.\n entrer para continuar pro código.")
+time.sleep(5) #O próximo input tinha um erro de digitação(animaç~eos), arrumei :
+limpaTela()
+input("\033[31m|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n aviso rápido, o código era suposto de ter algumas animaçõeszinhas disponiveis para todos os sistemas operacionais, mas devido a limitações do windows as animações estão disponíveis apenas para linux.\n entrer para continuar pro código.\n|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\033[0m")
 limpaTela()
 #Agora é o momento que o código pede as váriaveis. A gente só precisa de frequência e amplitude
 #Eu poderia fazer um loop até um valor correto ser aceito
@@ -157,21 +157,21 @@ while continuar == True:
     #SUPOSTAMENTE ele faz isso 20 vezes e completa nosso gráfico, aí é só imprimir o gráfico usando o imprimeTabela
     if os.name == "nt":
         imprimeTabela(grafico)
-    
-    if input("Acabou. se quiser gerar mais uma onda digite \033[32m1\033[0m, que tiver enjoado dessas ondas, digite qualquer outra coisa ai\n") == "1":
+    resp = input("Acabou. se quiser gerar mais uma onda digite \033[32m1\033[0m, que tiver enjoado dessas ondas, digite qualquer outra coisa ai\n(0 para finalizar o codigo sem creditos)\n")
+    if resp == "1":
         continuar = True
         limpaTela()
-    else:
+    elif resp == "0" or resp != "1":
         continuar = False
         limpaTela()
-        print("se gostou deixa o \033[32mlike\033[0m, se \033[31minscreve\033[0m e ativa o \033[33msininho\033[0m!")
     #EU FIZ UM TESTE COM FREQUÊNCIA 1 E AMPLITUDE 4 E DEU CERTO TESTAR COM MAIS VALORES DEPOIS VAMOOOOOOOOOOOOOOO
     #SUPOSTAMENTE É GG TROPA, SÓ FAZER O ARTIGO, ARRUMAR O QUE CÊS PREFERIR E LIMPAR ESSA BAGUNÇA
 limpaTela()
-print("é isso, vlw, flw, rola os créditos aí")
-for i in range(len(criadores_cabecalho)):
-    print(criadores_cabecalho[i])
-    time.sleep(1)
-    print(Criadores[i])
-    time.sleep(2)
-    limpaTela()
+if resp != "0":
+    print("é isso, vlw, flw, rola os créditos aí")
+    for i in range(len(criadores_cabecalho)):
+        print(criadores_cabecalho[i])
+        time.sleep(1)
+        print(Criadores[i])
+        time.sleep(4)
+        limpaTela()
